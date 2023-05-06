@@ -48,8 +48,8 @@ export class AuthService {
     });
     return update_user;
   }
-  async createUser(body: Pick<user, 'full_name' | 'email' | 'password'>) {
-    const user = await this.prisma.user.create({ data: body });
+  async createUser(data: Pick<user, 'full_name' | 'email' | 'password'>) {
+    const user = await this.prisma.user.create({ data });
     return user;
   }
   async updateProfileUser(
@@ -103,17 +103,21 @@ export class AuthService {
     return user;
   }
   async generateJWT(data: AuthPayload): Promise<LoginResponse> {
-    try {
-      const token = await this.jwt.signAsync(data, { expiresIn: '8h' });
-      return {
-        message: 'Login successfull!',
-        data: {
-          access_token: `Bearer ${token}`,
-        },
-      };
-    } catch (error) {
-      throw new InternalServerErrorException(error);
-    }
+    const token = await this.jwt.signAsync(data, { expiresIn: '8h' });
+    const insert_token_into_user = await this.prisma.user.update({
+      where: {
+        user_id: data.user_id,
+      },
+      data: {
+        token,
+      },
+    });
+    return {
+      message: 'Login successfull!',
+      data: {
+        access_token: `Bearer ${token}`,
+      },
+    };
   }
   async generateUser({
     email,
@@ -154,6 +158,21 @@ export class AuthService {
     });
     return {
       message: 'Change password successfull!',
+      data: {},
+    };
+  }
+
+  async logout(user_id: number): Promise<ResponseApi<{}>> {
+    const delete_token = await this.prisma.user.update({
+      where: {
+        user_id,
+      },
+      data: {
+        token: '',
+      },
+    });
+    return {
+      message: 'Logout successfull!',
       data: {},
     };
   }

@@ -39,13 +39,13 @@ model comment {
 
 model image {
   image_id    Int           @id @default(autoincrement())
-  name        String        @db.VarChar(100)
+  name        String        @db.VarChar(500)
   path        String        @db.VarChar(2800)
   description String?       @db.VarChar(500)
   created     DateTime?     @default(now()) @db.Timestamp(0)
-  user_id     Int?
+  user_id     Int
   comment     comment[]
-  user        user?         @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "image_ibfk_1")
+  user        user          @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "image_ibfk_1")
   img_emotion img_emotion[]
   saved       saved[]
 
@@ -83,6 +83,7 @@ model user {
   description String?       @db.VarChar(500)
   email       String        @db.VarChar(100)
   password    String        @db.VarChar(100)
+  token       String?       @db.VarChar(300)
   cmt_emotion cmt_emotion[]
   comment     comment[]
   image       image[]

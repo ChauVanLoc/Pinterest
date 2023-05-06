@@ -6,6 +6,7 @@ import {
   Body,
   HttpCode,
   Put,
+  Delete,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthGuard } from '@nestjs/passport';
@@ -32,6 +33,11 @@ export class AuthController {
   login(@Req() req: Request & { user: User }): Promise<LoginResponse> {
     const { user_id, full_name, email } = req.user;
     return this.authService.generateJWT({ email, full_name, user_id });
+  }
+
+  @Post('logout')
+  logout(@Req() req: Request & { user: AuthPayload }) {
+    return this.authService.logout(req.user.user_id);
   }
 
   @Public()
