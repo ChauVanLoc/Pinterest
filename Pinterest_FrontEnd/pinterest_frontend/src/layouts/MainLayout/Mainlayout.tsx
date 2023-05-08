@@ -1,13 +1,17 @@
+import { lazy } from 'react'
 import { Outlet } from 'react-router-dom'
-import Footer from 'src/pages/Footer'
-import Header from 'src/pages/Header'
+
+const Header = lazy(() => import('src/pages/Header'))
+const Footer = lazy(() => import('src/pages/Footer'))
 
 function Mainlayout() {
   return (
-    <div>
-      <Header />
-      <Outlet />
-      <Footer />
+    <div className='w-screen bg-background text-xs text-character lg:text-sm xl:text-base'>
+      <div className='px-4'>
+        <Header />
+        <Outlet />
+        <Footer />
+      </div>
     </div>
   )
 }
