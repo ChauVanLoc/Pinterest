@@ -8,10 +8,11 @@ function Login() {
   const location = useLocation()
   return (
     <div className='flex items-center justify-around bg-black/70 py-5'>
-      <div className='w-[30%] text-6xl font-medium leading-normal text-background'>
-        Đăng ký để nhận thêm ý tưởng
+      <div className='hidden w-[30%] font-medium text-background md:block md:text-4xl md:leading-snug lg:text-5xl xl:text-6xl xl:leading-normal'>
+        Đăng {location.pathname === `/${register}` ? 'ký' : 'nhập'} để nhận thêm
+        ý tưởng
       </div>
-      <div className='w-[30%] space-y-4 rounded-3xl bg-background px-16 py-5 shadow-sm'>
+      <div className='mx-5 space-y-3 rounded-3xl bg-background px-8 py-5 shadow-sm md:mx-0 md:w-[45%] md:space-y-4 md:px-8 lg:w-[35%] lg:px-8 xl:w-[30%] xl:px-14'>
         <div className='flex items-center justify-center'>
           <div className='inline-block rounded-full bg-myRed p-2'>
             <svg
@@ -20,7 +21,7 @@ function Login() {
               viewBox='0 0 24 24'
               strokeWidth={1.5}
               stroke='currentColor'
-              className='h-5 w-5 text-background'
+              className='h-3 w-3 text-background md:h-4 md:w-4 xl:h-5 xl:w-5'
             >
               <path
                 strokeLinecap='round'
@@ -30,7 +31,7 @@ function Login() {
             </svg>
           </div>
         </div>
-        <div className='space-y-2 text-center text-3xl font-medium'>
+        <div className='space-y-2 text-center text-lg font-medium md:text-xl lg:text-2xl xl:text-3xl'>
           <div>Chào mừng bạn đến với</div>
           <div>Vinterest</div>
         </div>
@@ -41,6 +42,7 @@ function Login() {
             <input
               className='rounded-xl border border-[2px] border-gray-300 px-3 py-2 focus:ring-4 focus:ring-blue-300'
               type='text'
+              placeholder='Enter your email'
               name='email'
               id='email'
             />
@@ -52,6 +54,7 @@ function Login() {
               type='text'
               name='password'
               id='password'
+              placeholder='Enter your password'
             />
           </div>
           {location.pathname !== `/${register}` && (
@@ -62,7 +65,7 @@ function Login() {
           {location.pathname === `/${register}` && (
             <div className='flex flex-col space-y-2'>
               <label htmlFor='password'>Ngày sinh</label>
-              <DatePicker className='rounded-xl border border-[2px] border-gray-300 px-3 py-2 focus:ring-4 focus:ring-blue-300' />
+              <DatePicker className='rounded-xl border border-[2px] border-gray-300 px-2 py-[5px] focus:ring-4 focus:ring-blue-300 lg:py-2' />
             </div>
           )}
           <div className='cursor-pointer rounded-xl bg-myRed py-3 text-center text-background duration-300 ease-in-out hover:bg-[#D50C22]'>

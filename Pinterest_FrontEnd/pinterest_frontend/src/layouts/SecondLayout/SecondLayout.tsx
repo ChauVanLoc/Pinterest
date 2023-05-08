@@ -6,7 +6,7 @@ const Footer = lazy(() => import('src/pages/Footer'))
 
 function SecondLayout() {
   return (
-    <div className='w-screen overflow-x-hidden bg-background text-xs text-character lg:text-sm xl:text-base'>
+    <div className='max-w-screen overflow-x-hidden bg-background text-xs text-character lg:text-sm xl:text-base'>
       <SecondHeader />
       <div className=''>
         <img src='' alt='' />
