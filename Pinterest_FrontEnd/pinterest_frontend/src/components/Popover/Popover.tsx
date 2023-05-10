@@ -1,5 +1,6 @@
 import {
   FloatingPortal,
+  shift,
   useClick,
   useFloating,
   useInteractions
@@ -8,7 +9,7 @@ import { ReactNode, useState } from 'react'
 
 type PopoverProps = {
   lable: ReactNode | string
-  lableClassName: string | null
+  lableClassName: string
   subNode: ReactNode
   subNodeClassName: string
 }
@@ -23,7 +24,8 @@ function Popover({
 
   const { refs, floatingStyles, context } = useFloating({
     open: isOpen,
-    onOpenChange: setIsOpen
+    onOpenChange: setIsOpen,
+    middleware: [shift()]
   })
 
   const click = useClick(context)
@@ -33,6 +35,7 @@ function Popover({
   return (
     <>
       <button
+        className={lableClassName}
         onClick={() => setIsOpen(!isOpen)}
         ref={refs.setReference}
         {...getReferenceProps()}
@@ -42,7 +45,7 @@ function Popover({
       {isOpen && (
         <FloatingPortal>
           <div
-            className={subNodeClassName}
+            className={`text-xs text-character lg:text-sm xl:text-base ${subNodeClassName}`}
             ref={refs.setFloating}
             style={floatingStyles}
             {...getFloatingProps()}
