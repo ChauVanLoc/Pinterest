@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { CommentEmotionDto, ImageEmotionDto } from './types/emotion.type';
+import { CommentEmotionDto, ImageEmotionDto } from './types/emotion.dto';
 import { cmt_emotion, img_emotion } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { ResponseApi } from 'src/types/ApiResponse';

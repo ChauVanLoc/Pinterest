@@ -68,12 +68,12 @@ export class AuthService {
       const user_updated = await this.updateUser(user_id, data);
       return {
         message: 'Update profile successfull!',
-        data: omit(user_updated, ['password', 'user_id']),
+        data: omit(user_updated, ['password', 'user_id', 'token']),
       };
     }
     return {
       message: 'Update profile successfull!',
-      data: omit(user, ['password', 'user_id']),
+      data: omit(user, ['password', 'user_id', 'token']),
     };
   }
   async hashPassword(plainText: string, saltOrRound = 10) {
@@ -84,7 +84,7 @@ export class AuthService {
       throw new InternalServerErrorException(error);
     }
   }
-  async comparePassword(plainPassword: string, encodePassword: string) {
+  comparePassword(plainPassword: string, encodePassword: string) {
     try {
       const isMatch = bcrypt.compareSync(plainPassword, encodePassword);
       return isMatch;
@@ -92,7 +92,7 @@ export class AuthService {
       throw new InternalServerErrorException(error);
     }
   }
-  async validateUser({ email, password }: LoginDTO): Promise<string | user> {
+  async validateUser({ email, password }: LoginDTO) {
     const user = await this.findUser({ email });
     if (!user) {
       return 'Email does not exist!';
@@ -143,13 +143,13 @@ export class AuthService {
   }
   async changePassword(
     user_id: number,
-    { new_password, old_password }: InstanceType<typeof ChangePasswordDTO>,
+    { new_password, current_password }: InstanceType<typeof ChangePasswordDTO>,
   ): Promise<ResponseApi<{}>> {
     const user = await this.findUserUnique(user_id);
     if (!user) {
       throw new BadRequestException('User does not exist!');
     }
-    if (!(await this.comparePassword(old_password, user.password))) {
+    if (!(await this.comparePassword(current_password, user.password))) {
       throw new BadRequestException('Incorrect old password!');
     }
     const encode_password = await this.hashPassword(new_password);

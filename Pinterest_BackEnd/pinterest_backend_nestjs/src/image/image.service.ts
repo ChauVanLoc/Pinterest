@@ -7,7 +7,7 @@ import {
 import { image, saved, user } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { ResponseApi } from 'src/types/ApiResponse';
-import { ImageDTO } from './types/image.dto';
+import { ImageDTO } from './dto/image.dto';
 import { omit } from 'lodash';
 import axios from 'axios';
 
@@ -100,7 +100,7 @@ export class ImageService {
     return {
       message: 'Get image successfull',
       data: {
-        ...omit(image, ['user.password']),
+        ...omit(image, ['user.password', 'user.token']),
         saved: Boolean(saved),
       },
     };
@@ -143,13 +143,39 @@ export class ImageService {
     return { message: 'Delete image successfull', data: {} };
   }
 
-  async createIdea(body: image): Promise<ResponseApi<image>> {
+  async createIdea(
+    body: Omit<image, 'image_id' | 'created'>,
+  ): Promise<ResponseApi<image>> {
     const data = await this.prisma.image.create({
       data: body,
     });
     return {
-      message: 'Create Image Idea successfull!',
+      message: 'Create image idea successfull!',
       data,
+    };
+  }
+
+  async createSaved(
+    user_id: number,
+    image_id: number,
+  ): Promise<ResponseApi<saved>> {
+    const image = await this.prisma.image.findUnique({
+      where: {
+        image_id,
+      },
+    });
+    if (!image) {
+      throw new BadRequestException('Image does not exist!');
+    }
+    const saved = await this.prisma.saved.create({
+      data: {
+        user_id,
+        image_id,
+      },
+    });
+    return {
+      message: 'Created saved successfull!',
+      data: saved,
     };
   }
 }

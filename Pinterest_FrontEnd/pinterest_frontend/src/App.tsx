@@ -49,7 +49,7 @@ function App() {
       <Route element={<ProtectRoute />}>
         <Route path='/' element={<Mainlayout />}>
           <Route
-            index
+            path='home'
             element={
               <Suspense>
                 <Home />

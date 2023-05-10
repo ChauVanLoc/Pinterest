@@ -1,8 +1,12 @@
 import { Controller, Post, Body, Delete, Req, Param } from '@nestjs/common';
 import { EmotionService } from './emotion.service';
-import { CommentEmotionDto, ImageEmotionDto } from './types/emotion.type';
+import { CommentEmotionDto, ImageEmotionDto } from './types/emotion.dto';
 import { AuthPayload } from 'src/types/AuthPayload';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { RequestWithAuthPayload } from 'src/types/RequestWithAuthPayload';
 
+@ApiBearerAuth()
+@ApiTags('Emotion')
 @Controller()
 export class EmotionController {
   constructor(private readonly emotionService: EmotionService) {}
@@ -10,7 +14,7 @@ export class EmotionController {
   // Create and Update emotion for comment
   @Post('cmt-emotion')
   createAndUpdateCmtEmotion(
-    @Req() req: Request & { user: AuthPayload },
+    @Req() req: RequestWithAuthPayload,
     @Body() body: CommentEmotionDto,
   ) {
     return this.emotionService.createAndUpdateCmtEmotion({
@@ -21,7 +25,7 @@ export class EmotionController {
 
   @Delete('cmt-emotion/:id')
   deleteCmtEmotion(
-    @Req() req: Request & { user: AuthPayload },
+    @Req() req: RequestWithAuthPayload,
     @Param('id') comment_id: number,
   ) {
     return this.emotionService.deleteCmtEmotion(req.user.user_id, comment_id);
@@ -30,7 +34,7 @@ export class EmotionController {
   // Create emotion for image
   @Post('img-emotion')
   createAndUpdateImgEmotion(
-    @Req() req: Request & { user: AuthPayload },
+    @Req() req: RequestWithAuthPayload,
     @Body() body: ImageEmotionDto,
   ) {
     return this.emotionService.createAndUpdateImgEmotion({
@@ -41,7 +45,7 @@ export class EmotionController {
 
   @Delete('img-emotion/:id')
   deleteImgEmotion(
-    @Req() req: Request & { user: AuthPayload },
+    @Req() req: RequestWithAuthPayload,
     @Param('id') image_id: number,
   ) {
     return this.emotionService.deleteImgEmotion(req.user.user_id, image_id);

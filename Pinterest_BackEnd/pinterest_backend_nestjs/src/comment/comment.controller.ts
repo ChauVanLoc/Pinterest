@@ -9,11 +9,12 @@ import {
   Delete,
 } from '@nestjs/common';
 import { CommentService } from './comment.service';
-import { CommentContentDTO, CommentDTO } from './types/comment.type';
-import { AuthPayload } from 'src/types/AuthPayload';
-import { cmt_emotion, comment, user } from '@prisma/client';
-import { ResponseApi } from 'src/types/ApiResponse';
+import { UpdateCommentDTO, CommentDTO } from './types/comment.dto';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { RequestWithAuthPayload } from 'src/types/RequestWithAuthPayload';
 
+@ApiBearerAuth()
+@ApiTags('Comment')
 @Controller('comment')
 export class CommentController {
   constructor(private readonly commentService: CommentService) {}
@@ -24,10 +25,7 @@ export class CommentController {
   }
 
   @Post()
-  createComment(
-    @Req() req: Request & { user: AuthPayload },
-    @Body() body: CommentDTO,
-  ) {
+  createComment(@Req() req: RequestWithAuthPayload, @Body() body: CommentDTO) {
     return this.commentService.createComment({
       ...body,
       user_id: req.user.user_id,
@@ -35,13 +33,13 @@ export class CommentController {
   }
 
   @Put()
-  updateComment(@Body() { comment_id, content }: CommentContentDTO) {
+  updateComment(@Body() { comment_id, content }: UpdateCommentDTO) {
     return this.commentService.updateComment(comment_id, content);
   }
 
   @Delete(':comment_id')
   deleteComment(
-    @Req() req: Request & { user: AuthPayload },
+    @Req() req: RequestWithAuthPayload,
     @Param('comment_id') param: number,
   ) {
     return this.commentService.deleteComment(req.user.user_id, param);

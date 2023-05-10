@@ -8,4 +8,6 @@ export type Login = {
 
 export type LoginResponse = ResponseApi<Login>;
 
-export type UserResponse = ResponseApi<Omit<user, 'password' | 'user_id'>>;
+export type UserResponse = ResponseApi<
+  Omit<user, 'password' | 'user_id' | 'token'>
+>;

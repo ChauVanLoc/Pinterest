@@ -17,37 +17,54 @@ import {
   MaxFileSizeValidator,
   ParseFilePipe,
 } from '@nestjs/common/pipes/file';
-import { ImageDTO, ImageQueryDTO } from './types/image.dto';
+import {
+  FileUploadDto,
+  ImageDTO,
+  ImageQueryDTO,
+  SavedDTO,
+} from './dto/image.dto';
 import { AuthPayload } from 'src/types/AuthPayload';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { ApiBearerAuth, ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
+import { RequestWithAuthPayload } from 'src/types/RequestWithAuthPayload';
+import { ResponseApi } from 'src/types/ApiResponse';
+import { image, saved } from '@prisma/client';
 
+@ApiBearerAuth()
+@ApiTags('Image')
 @Controller('images')
 export class ImageController {
   constructor(private readonly imgService: ImageService) {}
 
   // Home: get all image
   @Get()
-  async getAllImage(@Query() { image_name }: ImageQueryDTO) {
+  async getAllImage(
+    @Query() { image_name }: ImageQueryDTO,
+  ): Promise<ResponseApi<image[]>> {
     return this.imgService.getAllImage(image_name);
   }
 
   // User: get all image is created
   @Get('created')
-  async getAllImageCreated(@Req() req: Request & { user: AuthPayload }) {
+  async getAllImageCreated(
+    @Req() req: RequestWithAuthPayload,
+  ): Promise<ResponseApi<image[]>> {
     return this.imgService.getAllImageCreated(req.user.user_id);
   }
 
   // User: get all image is saved
   @Get('saved')
-  async getAllImageSaved(@Req() req: Request & { user: AuthPayload }) {
+  async getAllImageSaved(
+    @Req() req: RequestWithAuthPayload,
+  ): Promise<ResponseApi<(saved & { image: image })[]>> {
     return this.imgService.getAllImageSaved(req.user.user_id);
   }
 
-  // Get image deltail and isSaved by image_id
+  // Get image deltail and check image saved?
   // json response {...image, saved: saved????? ( true or false )}
   @Get(':image_id')
   async getImageById(
-    @Req() req: Request & { user: AuthPayload },
+    @Req() req: RequestWithAuthPayload,
     @Param('image_id') param: number,
   ) {
     return this.imgService.getImageDetailAndSaved(req.user.user_id, param);
@@ -56,16 +73,16 @@ export class ImageController {
   // Delete image by image_id
   @Delete(':image_id')
   async deleteImageById(
-    @Req() req: Request & { user: AuthPayload },
+    @Req() req: RequestWithAuthPayload,
     @Param('image_id') param: number,
   ) {
     return this.imgService.deleteImageById(req.user.user_id, param);
   }
 
   // Unsave image by image_id
-  @Delete('unsave/:image_id')
+  @Delete('saved/:image_id')
   async unsaveImageById(
-    @Req() req: Request & { user: AuthPayload },
+    @Req() req: RequestWithAuthPayload,
     @Param('image_id') param: number,
   ) {
     return this.imgService.unsaveImageById(req.user.user_id, param);
@@ -73,6 +90,10 @@ export class ImageController {
 
   // create post by file image
   @UseInterceptors(FileInterceptor('image'))
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    type: FileUploadDto,
+  })
   @Post('file')
   async createIdeaByFile(
     @UploadedFile(
@@ -84,7 +105,7 @@ export class ImageController {
       }),
     )
     file: Express.Multer.File,
-    @Req() req: Request & { user: AuthPayload },
+    @Req() req: RequestWithAuthPayload,
     @Body() body: ImageDTO,
   ) {
     return this.imgService.createIdea({
@@ -98,7 +119,7 @@ export class ImageController {
   // create post by url
   @Post('url')
   async createIdeaByUrl(
-    @Req() req: Request & { user: AuthPayload },
+    @Req() req: RequestWithAuthPayload,
     @Body() body: ImageDTO,
   ) {
     if (!body.path) {
@@ -111,5 +132,13 @@ export class ImageController {
       ...body,
       user_id: req.user.user_id,
     });
+  }
+
+  @Post('saved')
+  async createUnsaved(
+    @Req() req: RequestWithAuthPayload,
+    @Body() { image_id }: SavedDTO,
+  ) {
+    return this.imgService.createSaved(req.user.user_id, image_id);
   }
 }

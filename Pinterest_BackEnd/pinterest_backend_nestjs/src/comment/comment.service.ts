@@ -26,6 +26,7 @@ export class CommentService {
       if (!parent_cmt) {
         throw new BadRequestException('Commnent parent does not exist!');
       }
+      // Có parent id nhưng chưa chắc thực sự parent id thuộc về hình ảnh này
       if (!(parent_cmt.image_id === image.image_id)) {
         throw new BadRequestException('Input data incorrect!');
       }
@@ -75,8 +76,8 @@ export class CommentService {
       },
     });
     return {
-      message: 'Get images successfull!',
-      data: cmts.map((e) => omit(e, ['user.password'])),
+      message: 'Get comments successfull!',
+      data: cmts.map((e) => omit(e, ['user.password', 'user.token'])),
     };
   }
 

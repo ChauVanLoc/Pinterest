@@ -7,11 +7,15 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.setGlobalPrefix('api');
   const config = new DocumentBuilder()
-    .setTitle('Cats example')
-    .setDescription('The cats API description')
+    .setTitle('Pinterest')
+    .setDescription(
+      'The pinterest api description: test with account email: admin@gmail.com and password: passwordadmin2@',
+    )
     .setVersion('1.0')
-    .addTag('cats')
+    .setBasePath('api')
+    .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('/swagger', app, document);
@@ -31,7 +35,6 @@ async function bootstrap() {
       },
     }),
   );
-  app.setGlobalPrefix('api');
   await app.listen(1234);
 }
 bootstrap();

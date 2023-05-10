@@ -1,4 +1,5 @@
 import { OmitType, PickType } from '@nestjs/mapped-types';
+import { ApiProperty } from '@nestjs/swagger';
 import { Exclude, Expose, Transform, Type } from 'class-transformer';
 import {
   IsDate,
@@ -16,19 +17,19 @@ import {
 import { NotMatch } from 'src/utils/NotMatch';
 
 export class UserDTO {
-  @Expose()
+  @ApiProperty()
   @IsInt()
   @Min(0)
   @IsNotEmpty()
   user_id: number;
 
-  @Expose()
+  @ApiProperty()
   @IsString()
   @Length(1, 100)
   @IsNotEmpty()
   full_name: string;
 
-  @Expose()
+  @ApiProperty()
   @IsOptional()
   @IsISO8601()
   @Transform(({ value }) => {
@@ -39,18 +40,18 @@ export class UserDTO {
   })
   birth_day: Date;
 
-  @Expose()
+  @ApiProperty()
   @IsOptional()
   @IsString()
   @MaxLength(500)
   description: string;
 
-  @Expose()
+  @ApiProperty()
   @IsNotEmpty()
   @IsEmail({}, { message: 'Email Incorrect!' })
   email: string;
 
-  @Expose()
+  @ApiProperty()
   @IsNotEmpty()
   @Matches(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/, {
     message:
@@ -59,25 +60,70 @@ export class UserDTO {
   password: string;
 }
 
-export class LoginDTO extends PickType(UserDTO, [
-  'email',
-  'password',
-] as const) {}
+export class LoginDTO {
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsEmail({}, { message: 'Email Incorrect!' })
+  email: string;
 
-export class RegisterDTO extends PickType(UserDTO, [
-  'full_name',
-  'email',
-  'password',
-]) {}
+  @ApiProperty()
+  @IsNotEmpty()
+  @Matches(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/, {
+    message:
+      'Minimum 8 character, at least 1 letter, 1 number and 1 special character',
+  })
+  password: string;
+}
 
-export class UpdateInfoDTO extends OmitType(UserDTO, [
-  'user_id',
-  'email',
-  'password',
-]) {}
+export class RegisterDTO {
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsEmail({}, { message: 'Email Incorrect!' })
+  email: string;
+
+  @ApiProperty()
+  @IsString()
+  @Length(1, 100)
+  @IsNotEmpty()
+  full_name: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @Matches(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/, {
+    message:
+      'Minimum 8 character, at least 1 letter, 1 number and 1 special character',
+  })
+  password: string;
+}
+
+export class UpdateInfoDTO {
+  @ApiProperty()
+  @IsOptional()
+  @IsString()
+  @Length(1, 100)
+  @IsNotEmpty()
+  full_name: string;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsISO8601()
+  @Transform(({ value }) => {
+    if (new Date(value) > new Date()) {
+      return new Date().toISOString();
+    }
+    return value;
+  })
+  birth_day: Date;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsString()
+  @MaxLength(500)
+  description: string;
+}
 
 export class ChangePasswordDTO {
-  @Expose()
+  @ApiProperty()
   @IsNotEmpty()
   @Matches(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/, {
     message:
@@ -85,12 +131,12 @@ export class ChangePasswordDTO {
   })
   new_password: string;
 
-  @Expose()
+  @ApiProperty()
   @IsNotEmpty()
   @Matches(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/, {
     message:
       'Minimum 8 character, at least 1 letter, 1 number and 1 special character',
   })
   @NotMatch('new_password')
-  old_password: string;
+  current_password: string;
 }
