@@ -11,7 +11,7 @@ async function bootstrap() {
   const config = new DocumentBuilder()
     .setTitle('Pinterest')
     .setDescription(
-      'The pinterest api description: test with account email: admin@gmail.com and password: passwordadmin2@',
+      'The pinterest api description: test with account email: admin@gmail.com and password: passwordadmin1@',
     )
     .setVersion('1.0')
     .setBasePath('api')
