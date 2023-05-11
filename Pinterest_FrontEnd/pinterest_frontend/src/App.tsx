@@ -1,4 +1,4 @@
-import { lazy, Suspense, useContext } from 'react'
+import { lazy, Suspense, useContext, useEffect } from 'react'
 import { Routes, Route, Outlet, Navigate } from 'react-router-dom'
 import Mainlayout from './layouts/MainLayout'
 import { Context } from './contexts/AppContext'
@@ -24,6 +24,10 @@ const InjectRoute = () => {
 }
 
 function App() {
+  useEffect(() => {
+    alert('Project is under construction')
+  }, [])
+
   return (
     <Routes>
       <Route element={<InjectRoute />}>

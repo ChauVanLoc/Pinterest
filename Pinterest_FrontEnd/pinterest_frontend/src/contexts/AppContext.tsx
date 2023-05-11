@@ -27,7 +27,7 @@ function AppContext({ children }: ContextProps) {
     birth_day: '',
     description: ''
   })
-  const [isAuth, setIsAuth] = useState<boolean>(true)
+  const [isAuth, setIsAuth] = useState<boolean>(false)
   return (
     <Context.Provider
       value={{
